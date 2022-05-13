@@ -38,6 +38,25 @@ const generateFields = (inputFields) => {
           };
         }
       }
+      if (inputFields[item] && inputFields[item].type === "boolean") {
+        if (inputFields[item].required) {
+          newDataCheck[item] = {
+            type: Boolean,
+            required: true,
+            default: inputFields[item].default
+              ? inputFields[item].default
+              : false,
+          };
+        } else {
+          newDataCheck[item] = {
+            type: Boolean,
+            required: false,
+            default: inputFields[item].default
+              ? inputFields[item].default
+              : false,
+          };
+        }
+      }
       if (inputFields[item] && inputFields[item].type === "select") {
         if (inputFields[item].required) {
           newDataCheck[item] = {
@@ -68,6 +87,144 @@ const generateFields = (inputFields) => {
             required: false,
             ref: inputFields[item].model,
           };
+        }
+      }
+      if (inputFields[item] && inputFields[item].type === "array") {
+        if (inputFields[item] && inputFields[item].fields) {
+          const arrayData = {};
+          const arrayKeysData = inputFields[item].fields;
+          if (Object.keys(arrayKeysData)) {
+            Object.keys(arrayKeysData).map((sub_item, index) => {
+              if (
+                arrayKeysData[sub_item] &&
+                arrayKeysData[sub_item].type === "string"
+              ) {
+                if (arrayKeysData[sub_item].required) {
+                  arrayData[sub_item] = {
+                    type: String,
+                    required: true,
+                  };
+                  if (arrayKeysData[sub_item].default) {
+                    arrayData[sub_item]["default"] =
+                      arrayKeysData[sub_item].default;
+                  }
+                } else {
+                  arrayData[sub_item] = {
+                    type: String,
+                    required: false,
+                  };
+                  if (arrayKeysData[sub_item].default) {
+                    arrayData[sub_item]["default"] =
+                      arrayKeysData[sub_item].default;
+                  }
+                }
+              }
+
+              if (
+                arrayKeysData[sub_item] &&
+                arrayKeysData[sub_item].type === "number"
+              ) {
+                if (arrayKeysData[sub_item].required) {
+                  arrayData[sub_item] = {
+                    type: Number,
+                    required: true,
+                    default: arrayKeysData[sub_item].default
+                      ? arrayKeysData[sub_item].default
+                      : 0,
+                  };
+                } else {
+                  arrayData[item] = {
+                    type: Number,
+                    required: false,
+                    default: arrayKeysData[sub_item].default
+                      ? arrayKeysData[sub_item].default
+                      : 0,
+                  };
+                }
+              }
+              if (
+                arrayKeysData[sub_item] &&
+                arrayKeysData[sub_item].type === "boolean"
+              ) {
+                if (arrayKeysData[sub_item].required) {
+                  arrayData[sub_item] = {
+                    type: Boolean,
+                    required: true,
+                    default: arrayKeysData[sub_item].default
+                      ? arrayKeysData[sub_item].default
+                      : false,
+                  };
+                } else {
+                  arrayData[item] = {
+                    type: Boolean,
+                    required: false,
+                    default: arrayKeysData[sub_item].default
+                      ? arrayKeysData[sub_item].default
+                      : false,
+                  };
+                }
+              }
+              if (
+                arrayKeysData[sub_item] &&
+                arrayKeysData[sub_item].type === "select"
+              ) {
+                if (arrayKeysData[sub_item].required) {
+                  arrayData[sub_item] = {
+                    type: String,
+                    required: true,
+                    options: arrayKeysData[sub_item].options,
+                    default: arrayKeysData[sub_item].default
+                      ? arrayKeysData[sub_item].default
+                      : "",
+                  };
+                } else {
+                  arrayData[sub_item] = {
+                    type: String,
+                    required: false,
+                    options: arrayKeysData[sub_item].options,
+                    default: arrayKeysData[sub_item].default
+                      ? arrayKeysData[sub_item].default
+                      : "",
+                  };
+                }
+              }
+              if (
+                arrayKeysData[sub_item] &&
+                arrayKeysData[sub_item].type === "related"
+              ) {
+                if (arrayKeysData[sub_item].required) {
+                  arrayData[sub_item] = {
+                    type: mongoose.Schema.Types.ObjectId,
+                    required: true,
+                    ref: arrayKeysData[sub_item].model,
+                  };
+                } else {
+                  arrayData[sub_item] = {
+                    type: mongoose.Schema.Types.ObjectId,
+                    required: false,
+                    ref: arrayKeysData[sub_item].model,
+                  };
+                }
+              }
+            });
+          }
+          newDataCheck[item] = [arrayData];
+        }
+
+        if (inputFields[item] && inputFields[item].type === "related") {
+          if (inputFields[item].required) {
+            newDataCheck[item] = {
+              type: mongoose.Schema.Types.ObjectId,
+              required: true,
+              ref: inputFields[item].model,
+            };
+          } else {
+            newDataCheck[item] = {
+              type: mongoose.Schema.Types.ObjectId,
+              required: false,
+              ref: inputFields[item].model,
+            };
+          }
         }
       }
     });
